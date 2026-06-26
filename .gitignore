@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+# skyfield downloads the DE421 kernel + timescale files into the working dir:
+de421.bsp
+*.bsp
+finals2000A.all
+*.npz

@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "almanac-compute"
+version = "0.1.0"
+description = "Deterministic, verifiable ephemeris + geomagnetic computation — the numbers language models hallucinate, computed correctly and checked against NOAA and JPL."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Iris" }]
+keywords = [
+  "ephemeris", "geomagnetic", "declination", "magnetic-declination",
+  "WMM", "WMM2025", "world-magnetic-model", "astronomy", "navigation",
+  "skyfield", "deterministic", "verifiable",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: GIS",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+]
+dependencies = ["skyfield>=1.49"]   # tested on skyfield 1.54
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ephem>=4.1"]   # ephem = the independent cross-check engine
+
+[project.urls]
+Homepage = "https://github.com/savecharlie/almanac"
+Source = "https://github.com/savecharlie/almanac"
+
+[tool.setuptools]
+packages = ["almanac"]
+
+[tool.setuptools.package-data]
+almanac = ["data/*.COF", "data/*.txt"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
