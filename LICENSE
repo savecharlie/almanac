@@ -19,16 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Bundled data is NOT covered by the MIT license above and is in the public
-domain as works of government:
-
-  - data/WMM2025.COF and data/WMM2025_TestValues.txt are products of NOAA/NCEI
-    and the British Geological Survey (the US/UK World Magnetic Model 2025),
-    in the public domain as works of the US Government.
-
-  - The JPL DE421 ephemeris kernel (fetched by skyfield at runtime, not bundled
-    in this repository) is a product of NASA's Jet Propulsion Laboratory, in
-    the public domain.

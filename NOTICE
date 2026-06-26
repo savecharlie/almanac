@@ -1,0 +1,22 @@
+almanac — third-party data notices
+==================================
+
+The Python source in this repository is licensed under the MIT License (see
+LICENSE). The bundled and runtime-fetched DATA files are NOT covered by that
+license; they are in the public domain as works of government:
+
+1. World Magnetic Model 2025 — bundled
+   Files: almanac/data/WMM2025.COF, almanac/data/WMM2025_TestValues.txt
+   Source: NOAA/NCEI and the British Geological Survey (US/UK World Magnetic
+           Model 2025). A work of the US Government; public domain.
+   Validity: 2025.0–2030.0.
+
+2. JPL DE421 planetary ephemeris kernel — fetched at runtime, not bundled
+   File: de421.bsp (downloaded by skyfield into the working directory on first
+         use of almanac.ephemeris)
+   Source: NASA Jet Propulsion Laboratory. A work of the US Government; public
+           domain.
+
+No endorsement by NOAA, NCEI, BGS, NASA, or JPL is implied. The model values
+this software reports are subject to the providers' own accuracy statements;
+see the NOAA WMM disclaimer reproduced in README.md.
