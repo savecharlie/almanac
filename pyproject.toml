@@ -14,6 +14,7 @@ keywords = [
   "ephemeris", "geomagnetic", "declination", "magnetic-declination",
   "WMM", "WMM2025", "world-magnetic-model", "astronomy", "navigation",
   "skyfield", "deterministic", "verifiable",
+  "mcp", "model-context-protocol", "agent-tools", "llm-tools",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -28,6 +29,10 @@ dependencies = ["skyfield>=1.49"]   # tested on skyfield 1.54
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "ephem>=4.1"]   # ephem = the independent cross-check engine
+mcp = ["mcp>=1.2"]                  # exposes the cores as MCP tools for AI agents
+
+[project.scripts]
+almanac-mcp = "almanac.mcp_server:main"   # `pip install "almanac-compute[mcp]"` then `almanac-mcp`
 
 [project.urls]
 Homepage = "https://github.com/savecharlie/almanac"

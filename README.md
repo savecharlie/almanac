@@ -91,6 +91,34 @@ almanac.ephemeris.compute(lat, lon, elevation_m=0.0, when=None) -> dict
     # when = ISO-8601 UTC datetime, or "now"/None.
 ```
 
+## Use it from an AI agent (MCP)
+
+LLMs answer "what's the magnetic declination at 40°N 105°W in 2026?" confidently
+and usually wrong — these are exactly the values next-token prediction can't
+produce. `almanac` ships a [Model Context Protocol](https://modelcontextprotocol.io)
+server so an agent can **call** the verified computation instead of guessing it:
+
+```bash
+pip install "almanac-compute[mcp]"
+almanac-mcp        # stdio transport — point any MCP client at this command
+```
+
+Two tools, both deterministic and both checkable against the publishing
+authority:
+
+- **`magnetic_field(lat, lon, altitude_km=0, when=None)`** — WMM2025 declination,
+  inclination, intensity, X/Y/Z, secular variation.
+- **`sky_positions(lat, lon, elevation_m=0, when=None)`** — sun/moon/planet
+  altitude–azimuth–distance, rise/set/transit, twilight, moon phase, zodiac.
+
+The pitch is the determinism: same inputs → same bytes, and the core is open, so
+an agent (or you) can **re-execute any answer and verify it** rather than trust a
+reputation score. That's the whole design — trust by re-execution, not by vote.
+
+<!-- MCP registry namespace claim (proves this PyPI package and the
+     io.github.savecharlie GitHub account are the same owner): -->
+mcp-name: io.github.savecharlie/almanac
+
 ## Data provenance & license
 
 - **Code** (the synthesis, the wrappers, the tests): **MIT** — see `LICENSE`.
