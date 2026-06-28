@@ -103,6 +103,14 @@ pip install "almanac-compute[mcp]"
 almanac-mcp        # stdio transport — point any MCP client at this command
 ```
 
+Or run it as a container (the DE421 kernel is baked in at build time, so the
+server starts offline and answers introspection instantly):
+
+```bash
+docker build -t almanac-mcp .
+docker run --rm -i almanac-mcp        # speaks MCP on stdio
+```
+
 Two tools, both deterministic and both checkable against the publishing
 authority:
 

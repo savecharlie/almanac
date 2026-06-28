@@ -1,0 +1,15 @@
+# Keep the build context small and reproducible. The DE421 kernel is fetched
+# fresh at build time (it's gitignored, ~16 MB), never copied from the host.
+.git
+de421.bsp
+*.bsp
+*.npz
+finals2000A.all
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
