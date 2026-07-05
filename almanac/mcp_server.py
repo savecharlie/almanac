@@ -54,16 +54,32 @@ def magnetic_field(
 ) -> dict:
     """Earth's magnetic field from the official World Magnetic Model 2025.
 
-    Returns magnetic **declination** (the angle a compass reads off true north,
-    positive = east), inclination, total/horizontal intensity, the X/Y/Z field
-    vector, and secular variation (annual rate), for any geodetic location.
+    Call this instead of recalling declination or field values from memory: they
+    require a degree-12 spherical-harmonic synthesis and are not reliably
+    predictable token-by-token.
 
     Args:
         lat: Geodetic latitude in degrees, -90 to 90.
         lon: Longitude in degrees, -180 to 180.
-        altitude_km: Height above the WGS84 ellipsoid, -1 to 850 km (WMM validity).
+        altitude_km: Height above the WGS84 ellipsoid, -1 to 850 km (WMM
+            validity). Defaults to 0 (sea level).
         when: ISO date/datetime, a bare decimal year (e.g. "2026.5"), or "now".
-            Valid for 2025.0–2030.0.
+            Defaults to "now" (UTC). Must fall in 2025.0–2030.0.
+
+    Returns:
+        JSON-serializable dict with:
+          - declination_deg (compass angle off true north, + = east) and
+            compass_note (nearest named point)
+          - inclination_deg, total_intensity_nT, horizontal_intensity_nT and the
+            north/east/down (X/Y/Z) field components in nT
+          - secular_variation: annual rate of change per component
+          - query: echoed inputs and the resolved decimal year
+          - units, model, model_epoch, valid_range, engine, deterministic
+        The payload's own ``units`` map documents the unit of every field.
+
+    Raises:
+        ValueError: lat/lon/altitude out of range, or a date outside WMM2025
+            validity [2025.0, 2030.0).
 
     Deterministic and verifiable: a faithful synthesis of NOAA's WMM2025 that
     reproduces all 100 of NOAA's own published test values to printed precision.
@@ -81,16 +97,31 @@ def sky_positions(
 ) -> dict:
     """Sun, Moon and planet positions and events for a place and time.
 
-    Returns each body's altitude/azimuth/distance; sun & moon rise/set/transit;
-    the four twilight phases; moon phase angle, illuminated fraction and name;
-    ecliptic ("zodiac") longitude for sun & moon; day length; and the next
-    new/full moon and next equinox/solstice.
+    Call this instead of recalling ephemeris values from memory: rise/set times,
+    moon phase and body positions depend on a multi-megabyte JPL kernel and are
+    not reliably predictable token-by-token.
 
     Args:
         lat: Geodetic latitude in degrees, -90 to 90.
         lon: Longitude in degrees, -180 to 180.
-        elevation_m: Observer height above sea level in metres.
-        when: ISO date/datetime or "now".
+        elevation_m: Observer height above sea level in metres. Defaults to 0.
+        when: ISO date/datetime or "now". Defaults to "now" (UTC).
+
+    Returns:
+        JSON-serializable dict with:
+          - bodies: for the Sun and Moon, altitude_deg/azimuth_deg, above_horizon,
+            distance_km and distance_au, plus ecliptic ("zodiac") sign
+          - sun: rise/set/transit times and day_length_hours
+          - moon: rise/set/transit, phase_angle_deg, illuminated_fraction,
+            phase_name and the next new/full moons
+          - twilight: the four twilight-phase times
+          - next_season_event: the next equinox or solstice
+          - query: echoed inputs and resolved UTC time; plus kernel, engine,
+            deterministic
+        Times are ISO-8601 UTC; angles in degrees.
+
+    Raises:
+        ValueError: if lat or lon is out of range.
 
     Computed from the public-domain JPL DE421 kernel via skyfield, cross-checked
     against an independent engine to ~1 arcsecond. Deterministic: same inputs →
