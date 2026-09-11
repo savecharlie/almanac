@@ -29,11 +29,34 @@ test values; ephemeris cross-checks to ~1 arcsecond).
 
 from __future__ import annotations
 
-from mcp.server.fastmcp import FastMCP
+# The SDK renamed FastMCP -> MCPServer in mcp 2.0.0 (PyPI, 2026-07-28) and
+# DELETED mcp.server.fastmcp outright.  This package declared `mcp>=1.2` with no
+# upper bound, so from that day every fresh `pip install "almanac-compute[mcp]"`
+# produced a server that died on import before writing a single byte of
+# protocol -- forty-five days of it, while the tests here stayed green because
+# this machine happened to hold mcp 1.16.0.
+#
+# That is the exact failure arXiv:2609.10962 measures: of an unrepaired random
+# sample of 400 registry servers only 48.8% complete an initialize handshake,
+# and the dominant cause is not credentials (13.3%) but servers that never
+# start at all (37.5%).  Curated frames score 18 points better because they are
+# full of reference servers, and a developer's own machine is a curated frame
+# of one.  Found by cold-probing the PUBLISHED artifact in a clean venv --
+# earning/mcp_cold_probe.py in iris-the-maker -- not by running the tests.
+#
+# Both SDK lines are maintained (1.30.0 and 2.2.0 released the same day), so
+# support both rather than pinning either away.  The surface this file uses --
+# the constructor, .tool(annotations=...), .run(), .list_tools() -- is
+# source-identical across the rename.
+try:                                              # mcp >= 2.0
+    from mcp.server.mcpserver import MCPServer as _Server
+except ModuleNotFoundError:                       # mcp 1.x
+    from mcp.server.fastmcp import FastMCP as _Server
+from mcp.types import ToolAnnotations
 
 from almanac import geomag, ephemeris
 
-mcp = FastMCP(
+mcp = _Server(
     "almanac",
     instructions=(
         "Deterministic, verifiable physical-truth compute. Call magnetic_field "
@@ -45,7 +68,33 @@ mcp = FastMCP(
 )
 
 
-@mcp.tool()
+# Safety annotations, spelled out once and shared by both tools.
+#
+# arXiv:2609.10962 censused 24,135 registry servers and probed an unrepaired
+# random sample of 400: 58.8% of the 2,766 tools they found advertise none of
+# these hints, and the pattern is all-or-nothing per server -- 72 annotate
+# every tool, 122 annotate none. almanac was in the none half, which is silly
+# for two pure functions. These four booleans are how an agent decides whether
+# a tool is safe to call before spending a call on it.
+#
+# Every value here is a claim about this code, not a courtesy:
+#   readOnly   - both tools compute and return; nothing is written anywhere.
+#   destructive- follows from readOnly, stated rather than left to inference.
+#   idempotent - repeating a call with the same arguments has no additional
+#                effect. (when="now" makes the ANSWER move; the tool still has
+#                no side effects, which is what the hint is about.)
+#   openWorld  - False. The WMM2025 coefficients and the JPL DE421 kernel ship
+#                inside the package. No network, no search, no external state:
+#                the domain of possible answers is closed and fixed.
+PURE_COMPUTE = ToolAnnotations(
+    readOnlyHint=True,
+    destructiveHint=False,
+    idempotentHint=True,
+    openWorldHint=False,
+)
+
+
+@mcp.tool(annotations=PURE_COMPUTE)
 def magnetic_field(
     lat: float,
     lon: float,
@@ -88,7 +137,7 @@ def magnetic_field(
     return geomag.compute(lat, lon, altitude_km, when)
 
 
-@mcp.tool()
+@mcp.tool(annotations=PURE_COMPUTE)
 def sky_positions(
     lat: float,
     lon: float,

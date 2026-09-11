@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.savecharlie/almanac",
   "description": "Verified ephemeris & WMM2025 geomagnetic compute: the physical numbers LLMs hallucinate, done right.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "url": "https://github.com/savecharlie/almanac",
     "source": "github"
@@ -10,7 +10,7 @@
   "packages": [
     {
       "identifier": "almanac-compute",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       },

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "almanac-compute"
-version = "0.1.0"
+version = "0.1.1"
 description = "Deterministic, verifiable ephemeris + geomagnetic computation — the numbers language models hallucinate, computed correctly and checked against NOAA and JPL."
 readme = "README.md"
 requires-python = ">=3.9"
