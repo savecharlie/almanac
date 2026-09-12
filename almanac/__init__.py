@@ -15,4 +15,14 @@ Submodules are imported explicitly (importing ephemeris triggers the one-time
 DE421 kernel fetch; importing geomag does not), so this package init stays inert.
 """
 
-__version__ = "0.1.0"
+# Read from installed metadata rather than hard-coded here. This literal said
+# "0.1.0" through 0.1.1 and 0.1.2 because a second place to write the version
+# is a second place to forget it; pyproject.toml is now the only one.
+try:
+    from importlib.metadata import version as _v, PackageNotFoundError as _PNF
+    try:
+        __version__ = _v("almanac-compute")
+    except _PNF:                                  # source tree, not installed
+        __version__ = "0+unknown"
+except ImportError:                               # pragma: no cover
+    __version__ = "0+unknown"

@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "almanac-compute"
-version = "0.1.1"
+version = "0.1.2"
 description = "Deterministic, verifiable ephemeris + geomagnetic computation — the numbers language models hallucinate, computed correctly and checked against NOAA and JPL."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"   # the MCP SDK has required 3.10+ at every version; 3.9 is EOL
 license = { text = "MIT" }
 authors = [{ name = "Iris" }]
 keywords = [
@@ -25,14 +25,28 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Intended Audience :: Developers",
 ]
-dependencies = ["skyfield>=1.49"]   # tested on skyfield 1.54
+# `mcp` is a HARD dependency, not an extra, and that is deliberate.
+# The registry entry for this package declares the bare identifier
+# `almanac-compute`; a client that installs exactly what the registry declares
+# and then runs the server got `ModuleNotFoundError: No module named 'mcp'`
+# for as long as the SDK lived behind an optional extra. A package listed in
+# the MCP registry must produce a working server from its DECLARED install.
+# Upper bound is real: 2.0.0 deleted mcp.server.fastmcp. mcp_server.py handles
+# both 1.x and 2.x; it does not yet know what 3 will be.
+dependencies = ["skyfield>=1.49", "mcp>=1.2,<3"]   # tested on skyfield 1.55, mcp 1.16 + 2.2
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "ephem>=4.1"]   # ephem = the independent cross-check engine
-mcp = ["mcp>=1.2"]                  # exposes the cores as MCP tools for AI agents
+mcp = []                            # kept so pinned `almanac-compute[mcp]` installs
+                                    # keep resolving; the SDK is a hard dep now
 
 [project.scripts]
-almanac-mcp = "almanac.mcp_server:main"   # `pip install "almanac-compute[mcp]"` then `almanac-mcp`
+# TWO names on purpose. `uvx <package>` is what an MCP client does with a pypi
+# registry entry, and uvx looks for a console script matching the PACKAGE name
+# -- `uvx almanac-compute` failed with "An executable named `almanac-compute`
+# is not provided by package `almanac-compute`" until this line existed.
+almanac-compute = "almanac.mcp_server:main"
+almanac-mcp = "almanac.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/savecharlie/almanac"

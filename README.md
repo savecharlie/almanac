@@ -99,8 +99,9 @@ produce. `almanac` ships a [Model Context Protocol](https://modelcontextprotocol
 server so an agent can **call** the verified computation instead of guessing it:
 
 ```bash
-pip install "almanac-compute[mcp]"
-almanac-mcp        # stdio transport — point any MCP client at this command
+uvx almanac-compute            # zero-install, stdio transport
+# or
+pip install almanac-compute && almanac-compute
 ```
 
 Or run it as a container (the DE421 kernel is baked in at build time, so the

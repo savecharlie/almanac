@@ -25,7 +25,7 @@ The registry entry points at a real PyPI package, so this comes first.
 cd ~/almanac
 python3 -m build                      # builds sdist + wheel into dist/
 python3 -m twine upload dist/*        # paste the PyPI API token when prompted
-# verify:  pip install "almanac-compute[mcp]" && almanac-mcp   (Ctrl-C to stop)
+# verify:  pip install almanac-compute && almanac-compute   (Ctrl-C to stop)
 ```
 
 If the name `almanac-compute` is taken on PyPI, bump `name` in `pyproject.toml`

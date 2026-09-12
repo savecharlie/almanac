@@ -19,8 +19,9 @@ checked. Trust by re-execution, not by reputation.
 
 Run it::
 
-    pip install "almanac-compute[mcp]"
-    almanac-mcp            # stdio transport, ready for any MCP client
+    pip install almanac-compute
+    almanac-compute        # stdio transport, ready for any MCP client
+    # or: uvx almanac-compute
 
 This wrapper adds no math of its own; it is a thin, faithful surface over the
 already-verified cores (geomag reproduces all 100 of NOAA's published WMM2025
@@ -28,6 +29,8 @@ test values; ephemeris cross-checks to ~1 arcsecond).
 """
 
 from __future__ import annotations
+
+import inspect as _inspect
 
 # The SDK renamed FastMCP -> MCPServer in mcp 2.0.0 (PyPI, 2026-07-28) and
 # DELETED mcp.server.fastmcp outright.  This package declared `mcp>=1.2` with no
@@ -56,8 +59,20 @@ from mcp.types import ToolAnnotations
 
 from almanac import geomag, ephemeris
 
+# serverInfo.version was an empty string until 0.1.2, which means a client that
+# connected had no way to tell WHICH almanac it was talking to -- exactly the
+# blindness that let a dead 0.1.0 sit in the registry for forty-five days.
+# `version` is a 2.x-only constructor keyword (1.16 does not have it), so it is
+# feature-detected rather than assumed.
+from almanac import __version__
+
+_extra = {}
+if "version" in _inspect.signature(_Server.__init__).parameters:
+    _extra["version"] = __version__
+
 mcp = _Server(
     "almanac",
+    **_extra,
     instructions=(
         "Deterministic, verifiable physical-truth compute. Call magnetic_field "
         "for the Earth's magnetic field (WMM2025) and sky_positions for "

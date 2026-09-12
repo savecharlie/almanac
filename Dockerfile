@@ -21,7 +21,7 @@ WORKDIR /app
 # Install the package + the MCP extra from source — the same code in this repo,
 # so the running server is exactly what's auditable here (no drift from a release).
 COPY . /app
-RUN pip install --no-cache-dir ".[mcp]"
+RUN pip install --no-cache-dir .
 
 # Bake the public-domain JPL DE421 kernel (~16 MB) into the image. The ephemeris
 # core loads it at import; caching it here means the server starts OFFLINE and
